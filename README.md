@@ -1,6 +1,6 @@
 # gomigrate
 
-[![Build Status](https://travis-ci.org/DavidHuie/gomigrate.svg?branch=master)](https://travis-ci.org/DavidHuie/gomigrate)
+[![Build Status](https://travis-ci.org/ashearer/gomigrate.svg?branch=master)](https://travis-ci.org/ashearer/gomigrate)
 
 A SQL database migration toolkit in Golang.
 
@@ -13,23 +13,30 @@ A SQL database migration toolkit in Golang.
 
 ## Usage
 
-First import the package:
+First import the Go 1.16 embed package and this package:
 
 ```go
-import "github.com/DavidHuie/gomigrate"
+import (
+	"embed"
+	"github.com/ashearer/gomigrate"
+)
 ```
 
 Given a `database/sql` database connection to a PostgreSQL database, `db`,
-and a directory to migration files, create a migrator:
+and a directory named `migrations` in the same directory as the source code,
+create a migrator:
 
 ```go
-migrator, _ := gomigrate.NewMigrator(db, gomigrate.Postgres{}, "./migrations")
+//go:embed migrations
+var migrationsFS embed.FS
+
+migrator, _ := gomigrate.NewMigratorFS(db, gomigrate.Postgres{}, migrationsFS)
 ```
 
 You may also specify a specific logger to use, such as logrus:
 
 ```go
-migrator, _ := gomigrate.NewMigratorWithLogger(db, gomigrate.Postgres{}, "./migrations", logrus.New())
+migrator, _ := gomigrate.NewMigratorFSWithLogger(db, gomigrate.Postgres{}, migrationsFS, logrus.New())
 ```
 
 To migrate the database, run:
@@ -60,6 +67,10 @@ the migration should run relative to the other migrations.
 
 `id` should not be `0` as that value is used for internal validations.
 
+Note that in the example above of embedding migrations, Go will automatically
+skip filenames beginning with a period or underscore. This is typically useful,
+but could be overridden if necessary by using a wildcard glob pattern.
+
 ### Example
 
 If I'm trying to add a "users" table to the database, I would create
@@ -76,6 +87,13 @@ CREATE TABLE users();
 DROP TABLE users;
 ```
 
+## Requirements
+
+Go 1.16 or higher.
+
+
 ## Copyright
 
-Copyright (c) 2014 David Huie. See LICENSE.txt for further details.
+Copyright © 2014-2021 David Huie and Andrew Shearer. Based on
+https://github.com/DavidHuie/gomigrate by David Huie. See LICENSE.txt
+for further details.
