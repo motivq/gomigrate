@@ -24,16 +24,21 @@ import (
 
 Given a `database/sql` database connection to a PostgreSQL database, `db`,
 and a directory named `migrations` in the same directory as the source code,
-create a migrator:
+create a migrator that reads files within the embedded `migrations` directory:
 
 ```go
 //go:embed migrations
-var migrationsFS embed.FS
+var migrationsDirFS embed.FS // files will be embedded under path "migrations/"
 
+// make an FS to access the files without the "migrations/" path prefix
+migrationsFS, err := fs.Sub(migrationsDirFS, "migrations")
+if err != nil {
+	log.Fatal(err)
+}
 migrator, _ := gomigrate.NewMigratorFS(db, gomigrate.Postgres{}, migrationsFS)
 ```
 
-You may also specify a specific logger to use, such as logrus:
+You may also specify a logger, such as logrus:
 
 ```go
 migrator, _ := gomigrate.NewMigratorFSWithLogger(db, gomigrate.Postgres{}, migrationsFS, logrus.New())
