@@ -4,6 +4,15 @@
 
 A SQL database migration toolkit in Golang.
 
+This is a fork of https://github.com/DavidHuie/gomigrate that adds support for
+reading migration files embedded directly within the built executable, or from
+any other source available via the `fs.FS` interface present in Go 1.16 and up.
+This simplifies deployment by removing the need to install and manage a
+separate migrations directory.
+
+The previous file-based API also remains supported, even though the
+implementation now uses `fs.FS` internally.
+
 ## Supported databases
 
 - PostgreSQL
