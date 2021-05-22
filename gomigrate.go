@@ -126,13 +126,14 @@ func (m *Migrator) fetchMigrations() error {
 	}
 
 	for _, match := range matches {
-		num, migrationType, name, err := parseMigrationPath(match.Name())
+		filename := match.Name()
+		num, migrationType, name, err := parseMigrationPath(filename)
 		if err != nil {
-			m.logger.Printf("Invalid migration file found: %s", match)
+			m.logger.Printf("Invalid migration file found: %s", filename)
 			continue
 		}
 
-		m.logger.Printf("Migration file found: %s", match)
+		m.logger.Printf("Migration file found: %s", filename)
 
 		migration, ok := m.migrations[num]
 		if !ok {
@@ -140,9 +141,9 @@ func (m *Migrator) fetchMigrations() error {
 			m.migrations[num] = migration
 		}
 		if migrationType == upMigration {
-			migration.UpPath = match.Name()
+			migration.UpPath = filename
 		} else {
-			migration.DownPath = match.Name()
+			migration.DownPath = filename
 		}
 	}
 
