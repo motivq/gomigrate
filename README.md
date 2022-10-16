@@ -1,6 +1,6 @@
 # gomigrate
 
-[![Build Status](https://travis-ci.org/ashearer/gomigrate.svg?branch=master)](https://travis-ci.org/ashearer/gomigrate)
+[![Build Status](https://travis-ci.org/motivq/gomigrate.svg?branch=master)](https://travis-ci.org/motivq/gomigrate)
 
 A SQL database migration toolkit in Golang.
 
@@ -27,7 +27,7 @@ First import the Go 1.16 embed package and this package:
 ```go
 import (
 	"embed"
-	"github.com/ashearer/gomigrate"
+	"github.com/motivq/gomigrate"
 )
 ```
 
