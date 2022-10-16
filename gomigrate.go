@@ -9,6 +9,8 @@ import (
 	"log"
 	"os"
 	"sort"
+
+	"github.com/jmoiron/sqlx"
 )
 
 type migrationType string
@@ -28,7 +30,7 @@ var (
 )
 
 type Migrator struct {
-	DB         *sql.DB
+	DB         *sqlx.DB
 	fs         fs.FS
 	dbAdapter  Migratable
 	migrations map[uint64]*Migration
@@ -72,22 +74,22 @@ func (m *Migrator) CreateMigrationsTable() error {
 }
 
 // Returns a new migrator based on a directory pathname.
-func NewMigrator(db *sql.DB, adapter Migratable, migrationsPath string) (*Migrator, error) {
+func NewMigrator(db *sqlx.DB, adapter Migratable, migrationsPath string) (*Migrator, error) {
 	return NewMigratorWithLogger(db, adapter, migrationsPath, log.New(os.Stderr, "[gomigrate] ", log.LstdFlags))
 }
 
 // Returns a new migrator based on an fs.FS filesystem.
-func NewMigratorFS(db *sql.DB, adapter Migratable, migrationsFS fs.FS) (*Migrator, error) {
+func NewMigratorFS(db *sqlx.DB, adapter Migratable, migrationsFS fs.FS) (*Migrator, error) {
 	return NewMigratorFSWithLogger(db, adapter, migrationsFS, log.New(os.Stderr, "[gomigrate] ", log.LstdFlags))
 }
 
 // Returns a new migrator with the specified logger based on a directory pathname.
-func NewMigratorWithLogger(db *sql.DB, adapter Migratable, migrationsPath string, logger Logger) (*Migrator, error) {
+func NewMigratorWithLogger(db *sqlx.DB, adapter Migratable, migrationsPath string, logger Logger) (*Migrator, error) {
 	return NewMigratorFSWithLogger(db, adapter, os.DirFS(migrationsPath), logger)
 }
 
 // Returns a new migrator with the specified logger based on an fs.FS filesystem.
-func NewMigratorFSWithLogger(db *sql.DB, adapter Migratable, migrationsFS fs.FS, logger Logger) (*Migrator, error) {
+func NewMigratorFSWithLogger(db *sqlx.DB, adapter Migratable, migrationsFS fs.FS, logger Logger) (*Migrator, error) {
 	migrator := Migrator{
 		db,
 		migrationsFS,

@@ -8,12 +8,13 @@ import (
 	"testing"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 var (
-	db      *sql.DB
+	db      *sqlx.DB
 	adapter Migratable
 	dbType  string
 )
@@ -156,17 +157,17 @@ func init() {
 		dbType = "mysql"
 		log.Print("Using mysql")
 		adapter = Mariadb{}
-		db, err = sql.Open("mysql", "gomigrate:password@/gomigrate")
+		db, err = sqlx.Open("mysql", "gomigrate:password@/gomigrate")
 	case "sqlite3":
 		dbType = "sqlite3"
 		log.Print("Using sqlite3")
 		adapter = Sqlite3{}
-		db, err = sql.Open("sqlite3", "file::memory:?cache=shared")
+		db, err = sqlx.Open("sqlite3", "file::memory:?cache=shared")
 	default:
 		dbType = "pg"
 		log.Print("Using postgres")
 		adapter = Postgres{}
-		db, err = sql.Open("postgres", "host=localhost dbname=gomigrate sslmode=disable")
+		db, err = sqlx.Open("postgres", "host=localhost dbname=gomigrate sslmode=disable")
 	}
 
 	if err != nil {
