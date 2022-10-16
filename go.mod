@@ -1,4 +1,4 @@
-module github.com/ashearer/gomigrate
+module github.com/motivq/gomigrate
 
 go 1.16
 
